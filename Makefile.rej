@@ -1,0 +1,11 @@
+--- Makefile	2007-11-30 20:22:54.000000000 +0000
++++ Makefile	2015-12-01 15:54:59.033940812 +0000
+@@ -808,7 +808,7 @@ dnsptr dnsip dnsmxip dnsfq hostname ipme
+ forward preline condredirect bouncesaying except maildirmake \
+ maildir2mbox maildirwatch qail elq pinq idedit install-big install \
+ instcheck home home+df proc proc+df binm1 binm1+df binm2 binm2+df \
+-binm3 binm3+df
++binm3 binm3+df update_tmprsadh
+ 
+ load: \
+ make-load warn-auto.sh systype

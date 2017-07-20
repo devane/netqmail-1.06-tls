@@ -1,0 +1,27 @@
+--- qmail-smtpd.8	1998-06-15 10:53:16.000000000 +0000
++++ qmail-smtpd.8	2016-09-18 09:51:27.707704853 +0000
+@@ -212,6 +255,24 @@ Number of seconds
+ .B qmail-smtpd
+ will wait for each new buffer of data from the remote SMTP client.
+ Default: 1200.
++
++.TP 5
++.I tlsclients
++A list of email addresses. When relay rules would reject an incoming message,
++.B qmail-smtpd
++can allow it if the client presents a certificate that can be verified against
++the CA list in
++.I clientca.pem
++and the certificate email address is in
++.IR tlsclients .
++
++.TP 5
++.I tlsserverciphers
++A set of OpenSSL cipher strings. Multiple ciphers contained in a
++string should be separated by a colon. If the environment variable
++.B TLSCIPHERS
++is set to such a string, it takes precedence.
++
+ .SH "SEE ALSO"
+ tcp-env(1),
+ tcp-environ(5),

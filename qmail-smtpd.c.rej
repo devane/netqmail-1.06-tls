@@ -1,0 +1,58 @@
+--- qmail-smtpd.c	Mon Jun 15 03:53:16 1998
++++ qmail-smtpd.c	Tue Jun 18 09:49:38 2002
+@@ -229,7 +229,8 @@
+ }
+ void smtp_ehlo(arg) char *arg;
+ {
+-  smtp_greet("250-"); out("\r\n250-PIPELINING\r\n250 8BITMIME\r\n");
++  smtp_greet("250-");
++  out("\r\n250-PIPELINING\r\n250 8BITMIME\r\n");
+   seenmail = 0; dohelo(arg);
+ }
+ void smtp_rset()
+--- qmail-smtpd.c	2016-09-18 10:04:24.690101666 +0000
++++ qmail-smtpd.c	2015-12-15 15:30:22.973032231 +0000
+@@ -68,7 +86,16 @@ void die_ipme() { out("421 unable to fig
+ void straynewline() { out("451 See http://pobox.com/~djb/docs/smtplf.html.\r\n"); flush(); _exit(1); }
+ 
+ void err_bmf() { out("553 sorry, your envelope sender is in my badmailfrom list (#5.7.1)\r\n"); }
++#ifndef TLS
+ void err_nogateway() { out("553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)\r\n"); }
++#else
++void err_nogateway()
++{
++  out("553 sorry, that domain isn't in my list of allowed rcpthosts");
++  tls_nogateway();
++  out(" (#5.7.1)\r\n");
++}
++#endif
+ void err_unimpl(arg) char *arg; { out("502 unimplemented (#5.5.1)\r\n"); }
+ void err_syntax() { out("555 syntax error (#5.5.4)\r\n"); }
+ void err_wantmail() { out("503 MAIL first (#5.5.1)\r\n"); }
+@@ -149,6 +176,11 @@ void setup()
+   if (!remotehost) remotehost = "unknown";
+   remoteinfo = env_get("TCPREMOTEINFO");
+   relayclient = env_get("RELAYCLIENT");
++
++#ifdef TLS
++  if (env_get("SMTPS")) { smtps = 1; tls_init(); }
++  else
++#endif
+   dohelo(remotehost);
+ }
+ 
+@@ -251,9 +286,13 @@ void smtp_helo(arg) char *arg;
+ /* ESMTP extensions are published here */
+ void smtp_ehlo(arg) char *arg;
+ {
++#ifdef TLS
++  struct stat st;
++#endif
+   smtp_greet("250-");
+ #ifdef TLS
+-  if (!ssl) out("\r\n250-STARTTLS");
++  if (!ssl && (stat("control/servercert.pem",&st) == 0))
++    out("\r\n250-STARTTLS");
+ #endif
+   out("\r\n250-PIPELINING\r\n250 8BITMIME\r\n");
+   seenmail = 0; dohelo(arg);
