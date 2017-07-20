@@ -8,5 +8,7 @@ you need already installed qmail-uids-gids package or add users/groups manually 
 
 
 $ git clone https://github.com/devane/netqmail-1.06-tls
+
 $ cd netqmail-1.06-tls
+
 $ dpkg-buildpackage -uc
