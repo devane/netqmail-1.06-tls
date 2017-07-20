@@ -1,2 +1,3 @@
 # netqmail-1.06-tls
-netqmail 1.06 from Debian testing with TLS patch
+
+this is netqmail-1.06 extracted source from debian package in testing with patches + TLS patch
